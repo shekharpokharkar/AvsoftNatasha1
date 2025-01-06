@@ -42,9 +42,9 @@ public class VideoUploadController {
 			throw new IllegalArgumentException("File cannot be empty");
 		}
 
-		service.saveVideo(file, data);
+		String saveVideo = service.saveVideo(file, data);
 
-		return ResponseEntity.ok("Video uploaded successfully!");
+		return ResponseEntity.ok(saveVideo);
 	}
 	/*
 	 * @GetMapping("/get-video-list") public Map<String, List<String>>

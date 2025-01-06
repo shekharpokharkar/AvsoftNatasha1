@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class VideoUploadService {
 
 	@Transactional
 	// @Async
-	public void saveVideo(MultipartFile file, VideoRequestDto data) throws IOException, InterruptedException {
+	public String saveVideo(MultipartFile file, VideoRequestDto data) throws IOException, InterruptedException {
 
 		Video videoNew = new Video();
 		videoNew.setTitle(data.getTitle()); // Save the title from DTO
@@ -66,31 +67,44 @@ public class VideoUploadService {
 			// Set the file name to the title from VideoRequestDto with its extension
 			String titleFilename = data.getTitle() + extension;
 
-			//check if same video is already uploaded
+			// check if same video is already uploaded
 			int checkIfFileAlreadyExist = checkIfFileAlreadyExist(data.getTitle(), data.getBatch());
 
 			if (checkIfFileAlreadyExist > 1) {
 				throw new VideoAlreadyExist("Given Video Already Exist in dataBase");
 			}
-			
-			
+
 			// Save the file to the batch folder with the title as the filename Path
 			Path filepath = null;
 			try {
 
 				filepath = Paths.get(directoryPath + "/" + titleFilename);
-
+				Instant startTime = Instant.now();
 				Files.write(filepath, file.getBytes()); // Save the file
-
+				Instant endTime = Instant.now();
 				savedVideo.setVideostatus(true);
+				long durationMillis = java.time.Duration.between(startTime, endTime).toMillis();
 
+				// Calculate the file size in bytes
+				long fileSize = file.getSize(); // Size in bytes
+
+				// Optionally, convert file size to a readable format (e.g., MB)
+				double fileSizeInMB = fileSize / (1024.0 * 1024.0); // Convert bytes to MB
+
+				// Return success message with the upload time and file size
+				return String.format("Video uploaded successfully in %d milliseconds. File size: %.2f MB.",
+						durationMillis, fileSizeInMB);
+
+				
 			} catch (java.io.IOException e) {
 				e.printStackTrace();
-				throw new IllegalStateException("Failed to save the video file", e);
+				// throw new IllegalStateException("Failed to save the video file", e);
+				return "File upload failed: " + e.getMessage();
 			}
 
 		} else {
 			throw new IllegalArgumentException("File cannot be empty");
+
 		}
 
 	}

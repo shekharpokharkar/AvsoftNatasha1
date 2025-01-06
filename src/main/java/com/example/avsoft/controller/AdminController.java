@@ -222,5 +222,13 @@ public class AdminController {
 
 		return new ResponseEntity<List<UserPaymentResponseDTO>>(payment, HttpStatus.OK);
 	}
+	
+	@GetMapping("/users/processFeeByBatchId/{userId}")
+	public ResponseEntity<UserPaymentResponseDTO> getAllprocessFeeRequestBasedOnUserId(
+			@PathVariable int userId) {
+	UserPaymentResponseDTO payment = userService.getAllprocessFeeRequestBasedOnUserId(userId);
+
+		return new ResponseEntity<UserPaymentResponseDTO>(payment, HttpStatus.OK);
+	}
 
 }

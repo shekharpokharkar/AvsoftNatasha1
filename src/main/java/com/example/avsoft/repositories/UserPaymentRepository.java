@@ -20,6 +20,9 @@ public interface UserPaymentRepository extends JpaRepository<UserPayment, UserPa
 	@Query("SELECT U FROM UserPayment U WHERE U.batchId = :batchId")
 	public List<UserPayment> findAllByBatchId(int batchId);
 
+	@Query("SELECT U FROM UserPayment U WHERE U.userId = :userId")
+	public UserPayment findByUserId(int userId);
+
 
 	
 

@@ -250,6 +250,7 @@ public class UserService {
 			payment.setStatus(dto.getStatus());
 			payment.setTotalPaidAmount(dto.getTotalPaidAmount());
 			payment.setUserId(dto.getUserId());
+			payment.setBatchId(batchId);
 			pmt.add(payment);
 		}
 
@@ -303,6 +304,26 @@ public class UserService {
 		}
 
 		return pmt;
+	}
+
+	public UserPaymentResponseDTO getAllprocessFeeRequestBasedOnUserId(int userId) {
+	
+		UserPayment dto = paymentRepository.findByUserId(userId);
+		
+		UserPaymentResponseDTO payment = new UserPaymentResponseDTO();
+		
+		Optional<Batch> byId = batchRepository.findById(dto.getBatchId());
+		if(dto != null)
+		{
+			payment.setBatchTotalFees(byId.get().getFee());
+			payment.setRequestedAmount(dto.getRequestedAmount());
+			payment.setStatus(dto.getStatus());
+			payment.setTotalPaidAmount(dto.getTotalPaidAmount());
+			payment.setUserId(dto.getUserId());
+			payment.setBatchTotalFees(byId.get().getFee());
+		}
+			
+		return payment;
 	}
 
 }
