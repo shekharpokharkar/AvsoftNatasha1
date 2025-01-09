@@ -96,4 +96,19 @@ public class GlobalExceptionHandler {
 		return dto;
 
 	}
+	
+	
+	
+	@ExceptionHandler(value = UserEnrollmentException.class)
+	public ExceptionResponseDTO userPaymentException(UserEnrollmentException exception) {
+
+		ExceptionResponseDTO dto = new ExceptionResponseDTO();
+		
+		dto.setDate(new Date());
+		dto.setErrorClass(exception.getClass().toString());
+		dto.setErrorMessage(exception.getMessage());
+
+		return dto;
+
+	}
 }

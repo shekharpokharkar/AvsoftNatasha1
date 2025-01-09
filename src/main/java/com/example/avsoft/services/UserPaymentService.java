@@ -16,6 +16,7 @@ import com.example.avsoft.entities.InstallmentStructure;
 import com.example.avsoft.entities.UserBatchEnrollment;
 import com.example.avsoft.entities.UserPayment;
 import com.example.avsoft.entities.UserPaymentID;
+import com.example.avsoft.exceptions.UserEnrollmentException;
 import com.example.avsoft.exceptions.UserPaymentException;
 import com.example.avsoft.repositories.InstallmentStructureRepository;
 import com.example.avsoft.repositories.UserBatchEnrollmentRepo;
@@ -36,7 +37,7 @@ public class UserPaymentService {
 	@Autowired
 	private InstallmentStructureRepository installmentRepo;
 
-	public UserPayment addUserPayment(UserPaymentsRequestDTO payment) {
+	public UserPayment addUserPayment(UserPaymentsRequestDTO payment) throws UserEnrollmentException {
 
 		UserPayment user = new UserPayment();
 
@@ -45,12 +46,12 @@ public class UserPaymentService {
 
 		Optional<UserBatchEnrollment> byBatchIdAndUserId = userRepo.findByBatchIdAndUserId(batch, userId);
 
-		int batchfee = byBatchIdAndUserId.get().getBatch().getFee();
-
 		if (byBatchIdAndUserId.isEmpty()) {
 			throw new UserPaymentException("Student:" + userId + " is not enrolled in in the batch:" + batch
 					+ " first enroll and the do payment");
 		}
+		int batchfee = byBatchIdAndUserId.get().getBatch().getFee();
+
 		Optional<UserPayment> byUserPayment = repository.findById(new UserPaymentID(userId, batch));
 
 		if (byUserPayment.isPresent()) {
@@ -63,10 +64,12 @@ public class UserPaymentService {
 						"Please Enter the amount less than " + ((batchfee - byUserPayment.get().getTotalPaidAmount())));
 			}
 
-			if (byUserPayment.get().getStatus().equalsIgnoreCase("Pending")) {
-				throw new UserPaymentException("please Contact to Admin your previous payment is not accepted");
-			}
+			if (byUserPayment.get().getStatus() != null) {
 
+				if (byUserPayment.get().getStatus().equalsIgnoreCase("Pending")) {
+					throw new UserPaymentException("please Contact to Admin your previous payment is not accepted");
+				}
+			}
 		}
 
 		if (batchfee < payment.getAmount()) {
@@ -92,20 +95,22 @@ public class UserPaymentService {
 
 		UserPaymentID ID = new UserPaymentID(userId, BatchId);
 		Optional<UserPayment> byId = repository.findById(ID);
+
+		if (byId.isEmpty()) {
+			throw new RuntimeException("Sorry Your Record Not found plz check once OR contact to admin");
+		}
 		UserPayment userPayment = byId.get();
 
-		
 		List<InstallmentStructure> byBatch = installmentRepo.findByBatch(BatchId);
-		
+
 		UserPaymentDetailsDTO dto = new UserPaymentDetailsDTO();
 
 		UserPaymentDetailsDTO detailsDTO = mapper.map(userPayment, UserPaymentDetailsDTO.class);
 
 		InstallmentDTO[] map = mapper.map(byBatch, InstallmentDTO[].class);
-		
+
 		detailsDTO.setDto(Arrays.asList(map));
-		
-		
+
 		return detailsDTO;
 	}
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.avsoft.dtos.UserPaymentDetailsDTO;
 import com.example.avsoft.dtos.UserPaymentsRequestDTO;
 import com.example.avsoft.entities.UserPayment;
+import com.example.avsoft.exceptions.UserEnrollmentException;
 import com.example.avsoft.services.UserPaymentService;
 
 @RestController
@@ -23,7 +24,7 @@ public class UserPaymentController {
 	public UserPaymentService service;
 
 	@PostMapping("/userPayments")
-	public ResponseEntity<UserPayment> dopayment(@RequestBody UserPaymentsRequestDTO dto) {
+	public ResponseEntity<UserPayment> dopayment(@RequestBody UserPaymentsRequestDTO dto) throws UserEnrollmentException {
 		UserPayment userPayment = service.addUserPayment(dto);
 		return new ResponseEntity<UserPayment>(userPayment, HttpStatus.OK);
 	}
@@ -36,9 +37,9 @@ public class UserPaymentController {
 	}
 
 	@GetMapping("/userPaymentByID")
-	public ResponseEntity<UserPaymentDetailsDTO> getFeeDetails(@RequestParam String batchId, @RequestParam String userId) {
+	public ResponseEntity<UserPaymentDetailsDTO> getFeeDetails(@RequestParam int batchId, @RequestParam int userId) {
 
-		UserPaymentDetailsDTO userPayment = service.getPaymentDetails(Integer.parseInt(userId), Integer.parseInt(batchId));
+		UserPaymentDetailsDTO userPayment = service.getPaymentDetails(userId,batchId);
 		return new ResponseEntity<UserPaymentDetailsDTO>(userPayment, HttpStatus.OK);
 	}
 }

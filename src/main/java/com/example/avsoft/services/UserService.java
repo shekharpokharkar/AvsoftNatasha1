@@ -59,6 +59,8 @@ public class UserService {
 	@Autowired
 	private UserBatchEnrollmentRepo userBatchrepo;
 	
+	
+	
 	public List<UserDto> allUsers() {
 		List<User> users = (List<User>) userRepository.findAll();
 		return users.stream().map((user -> {
@@ -169,37 +171,62 @@ public class UserService {
 		userRepository.save(user);
 	}
 
+	//Admin give you userId and Batch Id
 	public UserPaymentResponseDTO processFee(UserPaymentsRequestDTO dto) {
 		int batchId = dto.getBatchId();
 
+		//Find Corresponding Batch by using batch Id   
 		Optional<Batch> byBatchId = batchRepository.findById(batchId);
 		
+		//Find UserBatch Enrollment  by using batch Id   and userId
 		Optional<UserBatchEnrollment> byBatchIdAndUserId = userBatchrepo.findByBatchIdAndUserId(batchId,
 				dto.getUserId());
 
+		//If corresponding user or batch didnt exist then throw error
 		if (byBatchId.isEmpty() || byBatchIdAndUserId.isEmpty()) {
 			throw new RuntimeException("Given " + batchId
 					+ " id is Incorrect OR please enter correct Batch Id OR Enroll In Batch:" + batchId);
 		}
 		
-
+		
 		UserPaymentID id = new UserPaymentID(dto.getUserId(), batchId);
 
+		//Find User payment Details
 		Optional<UserPayment> byId = paymentRepository.findById(id);
 
+		if(byId.isPresent()&& byId.get().getRequestedAmount() != null )
+		{
+			
+			dto.setAmount(byId.get().getRequestedAmount().intValue());
+			
+		}
+		else
+		{
+			throw new RuntimeException("Exception Occurs");
+		}
+		
+		//Create ResponseDTO
 		UserPaymentResponseDTO payment = new UserPaymentResponseDTO();
 
+		
+		// if corresponding user and batch id exist then process
 		if (byId.isPresent()) {
 
 			UserPayment userPayment = byId.get();
 			
 		
+			//find previous paid amount
 			int totalPaidAmount = byId.get().getTotalPaidAmount();
+			
+			//get requested paid Amount
 			BigDecimal requestedAmount2 = byId.get().getRequestedAmount();
-			String status=dto.getStatus();
-			if("Approved".equalsIgnoreCase(status))
+		
+			//get 
+		
+			
+			if("Approved".equalsIgnoreCase(dto.getStatus()))
 			{
-				userPayment.setStatus(status);
+				userPayment.setStatus(dto.getStatus());
 				userPayment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
 				userPayment.setRequestedAmount(new BigDecimal(0));
 				//change status in db
@@ -214,26 +241,20 @@ public class UserService {
 			}else
 			{
 				
-				userPayment.setStatus(status);
+				userPayment.setStatus(dto.getStatus());
 				userPayment.setTotalPaidAmount(totalPaidAmount);
 				userPayment.setRequestedAmount(userPayment.getRequestedAmount());
 				//change status in db
 				UserPayment save = paymentRepository.save(userPayment);
-				
-				
 				payment.setBatchId(userPayment.getBatchId());
 				payment.setBatchTotalFees(byBatchId.get().getFee());
 				payment.setRequestedAmount(userPayment.getRequestedAmount());
-				payment.setStatus(status);
+				payment.setStatus(dto.getStatus());
 				payment.setTotalPaidAmount(totalPaidAmount);
 				payment.setUserId(userPayment.getUserId());
 			}
 			
-			
-			
-
 		}
-
 		return payment;
 	}
 
