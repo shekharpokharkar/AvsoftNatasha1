@@ -20,14 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.avsoft.dtos.BatchInstallmentRequestDTO;
 import com.example.avsoft.dtos.ChangeStatusDto;
-import com.example.avsoft.dtos.EnrollmentStudent;
+import com.example.avsoft.dtos.EnrollmentResponseStudent;
 import com.example.avsoft.dtos.UserPaymentResponseDTO;
 import com.example.avsoft.dtos.UserPaymentsRequestDTO;
 import com.example.avsoft.entities.Batch;
 import com.example.avsoft.entities.Blog;
 import com.example.avsoft.entities.Courses;
 import com.example.avsoft.entities.Enquiry;
-import com.example.avsoft.entities.UserPayment;
 import com.example.avsoft.services.AdminService;
 import com.example.avsoft.services.BatchService;
 import com.example.avsoft.services.BlogServices;
@@ -145,9 +144,9 @@ public class AdminController {
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/get-enrollments/{batchId}")
-	public ResponseEntity<List<EnrollmentStudent>> getEnrollments(@PathVariable int batchId) {
+	public ResponseEntity<List<EnrollmentResponseStudent>> getEnrollments(@PathVariable int batchId) {
 		// Fetch the enrolled users for the batch
-		List<EnrollmentStudent> users = enrollmentService.getEnrollments(batchId);
+		List<EnrollmentResponseStudent> users = enrollmentService.getEnrollments(batchId);
 
 		// Return the list of users in the response
 		return ResponseEntity.ok(users);

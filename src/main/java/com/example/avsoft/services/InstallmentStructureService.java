@@ -16,8 +16,8 @@ public class InstallmentStructureService {
 
 	public List<InstallmentStructure> getAllInstruction(String batchId) {
 
-		Long batch = Long.parseLong(batchId);
-		List<InstallmentStructure> installStructureList = installmentRepository.findByBatch(batch);
+		
+		List<InstallmentStructure> installStructureList = installmentRepository.findByBatch(Integer.parseInt(batchId));
 
 		return installStructureList;
 	}

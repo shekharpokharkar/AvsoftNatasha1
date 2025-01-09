@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.avsoft.dtos.UserPaymentDetailsDTO;
 import com.example.avsoft.dtos.UserPaymentsRequestDTO;
 import com.example.avsoft.entities.UserPayment;
 import com.example.avsoft.services.UserPaymentService;
@@ -36,9 +36,9 @@ public class UserPaymentController {
 	}
 
 	@GetMapping("/userPaymentByID")
-	public ResponseEntity<UserPayment> getFeeDetails(@RequestParam String batchId, @RequestParam String userId) {
+	public ResponseEntity<UserPaymentDetailsDTO> getFeeDetails(@RequestParam String batchId, @RequestParam String userId) {
 
-		UserPayment userPayment = service.getPaymentDetails(Integer.parseInt(userId), Integer.parseInt(batchId));
-		return new ResponseEntity<UserPayment>(userPayment, HttpStatus.OK);
+		UserPaymentDetailsDTO userPayment = service.getPaymentDetails(Integer.parseInt(userId), Integer.parseInt(batchId));
+		return new ResponseEntity<UserPaymentDetailsDTO>(userPayment, HttpStatus.OK);
 	}
 }

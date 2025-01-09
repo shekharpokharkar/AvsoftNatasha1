@@ -5,7 +5,9 @@ public class BatchInstallmentDetailsDTO {
 	public int installmentNo;
 	public String InstallmentFee;
 	public String InstallmentDate;
-
+	
+	
+	
 	public int getInstallmentNo() {
 		return installmentNo;
 	}

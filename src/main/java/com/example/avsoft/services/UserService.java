@@ -58,7 +58,7 @@ public class UserService {
 
 	@Autowired
 	private UserBatchEnrollmentRepo userBatchrepo;
-
+	
 	public List<UserDto> allUsers() {
 		List<User> users = (List<User>) userRepository.findAll();
 		return users.stream().map((user -> {
@@ -173,6 +173,7 @@ public class UserService {
 		int batchId = dto.getBatchId();
 
 		Optional<Batch> byBatchId = batchRepository.findById(batchId);
+		
 		Optional<UserBatchEnrollment> byBatchIdAndUserId = userBatchrepo.findByBatchIdAndUserId(batchId,
 				dto.getUserId());
 
@@ -180,6 +181,7 @@ public class UserService {
 			throw new RuntimeException("Given " + batchId
 					+ " id is Incorrect OR please enter correct Batch Id OR Enroll In Batch:" + batchId);
 		}
+		
 
 		UserPaymentID id = new UserPaymentID(dto.getUserId(), batchId);
 
@@ -190,27 +192,54 @@ public class UserService {
 		if (byId.isPresent()) {
 
 			UserPayment userPayment = byId.get();
-			BigDecimal requestedAmount = userPayment.getRequestedAmount();
-
-			userPayment.setStatus("Approved");
-			userPayment.setTotalPaidAmount(requestedAmount.intValue());
-			userPayment.setRequestedAmount(new BigDecimal(0));
-			UserPayment save = paymentRepository.save(userPayment);
-			payment.setBatchId(userPayment.getBatchId());
-
-			Batch batch2 = byBatchId.get();
-
-			payment.setBatchTotalFees(batch2.getFee());
-			payment.setRequestedAmount(userPayment.getRequestedAmount());
-			payment.setStatus("Approved");
-			payment.setTotalPaidAmount(requestedAmount.intValue());
-			payment.setUserId(userPayment.getUserId());
+			
+		
+			int totalPaidAmount = byId.get().getTotalPaidAmount();
+			BigDecimal requestedAmount2 = byId.get().getRequestedAmount();
+			String status=dto.getStatus();
+			if("Approved".equalsIgnoreCase(status))
+			{
+				userPayment.setStatus(status);
+				userPayment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
+				userPayment.setRequestedAmount(new BigDecimal(0));
+				//change status in db
+				UserPayment save = paymentRepository.save(userPayment);
+				
+				payment.setBatchId(userPayment.getBatchId());
+				payment.setBatchTotalFees(byBatchId.get().getFee());
+				payment.setRequestedAmount(userPayment.getRequestedAmount());
+				payment.setStatus("Approved");
+				payment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
+				payment.setUserId(userPayment.getUserId());
+			}else
+			{
+				
+				userPayment.setStatus(status);
+				userPayment.setTotalPaidAmount(totalPaidAmount);
+				userPayment.setRequestedAmount(userPayment.getRequestedAmount());
+				//change status in db
+				UserPayment save = paymentRepository.save(userPayment);
+				
+				
+				payment.setBatchId(userPayment.getBatchId());
+				payment.setBatchTotalFees(byBatchId.get().getFee());
+				payment.setRequestedAmount(userPayment.getRequestedAmount());
+				payment.setStatus(status);
+				payment.setTotalPaidAmount(totalPaidAmount);
+				payment.setUserId(userPayment.getUserId());
+			}
+			
+			
+			
 
 		}
 
 		return payment;
 	}
 
+	
+	
+	
 	public List<UserPaymentResponseDTO> getAllprocessFee() {
 
 		List<UserPayment> allPayment = paymentRepository.findAll();

@@ -1,29 +1,40 @@
 package com.example.avsoft.services;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.avsoft.dtos.InstallmentDTO;
+import com.example.avsoft.dtos.UserPaymentDetailsDTO;
 import com.example.avsoft.dtos.UserPaymentsRequestDTO;
+import com.example.avsoft.entities.InstallmentStructure;
 import com.example.avsoft.entities.UserBatchEnrollment;
 import com.example.avsoft.entities.UserPayment;
 import com.example.avsoft.entities.UserPaymentID;
 import com.example.avsoft.exceptions.UserPaymentException;
+import com.example.avsoft.repositories.InstallmentStructureRepository;
 import com.example.avsoft.repositories.UserBatchEnrollmentRepo;
 import com.example.avsoft.repositories.UserPaymentRepository;
 
 @Service
 public class UserPaymentService {
-	
+
+	@Autowired
+	private ModelMapper mapper;
+
 	@Autowired
 	private UserPaymentRepository repository;
 
 	@Autowired
 	private UserBatchEnrollmentRepo userRepo;
+
+	@Autowired
+	private InstallmentStructureRepository installmentRepo;
 
 	public UserPayment addUserPayment(UserPaymentsRequestDTO payment) {
 
@@ -46,7 +57,7 @@ public class UserPaymentService {
 			if (byUserPayment.get().getTotalPaidAmount() == batchfee) {
 				throw new UserPaymentException("Thank you are already paid the Batch fees!!!");
 			}
-			
+
 			if ((batchfee - byUserPayment.get().getTotalPaidAmount()) < payment.getAmount()) {
 				throw new UserPaymentException(
 						"Please Enter the amount less than " + ((batchfee - byUserPayment.get().getTotalPaidAmount())));
@@ -67,17 +78,35 @@ public class UserPaymentService {
 		user.setBatchId(batch);
 		user.setStatus("Pending");
 		user.setUserId(userId);
-		user.setTotalPaidAmount(0);
+		if (byUserPayment.isEmpty()) {
+			user.setTotalPaidAmount(0);
 
+		} else {
+			user.setTotalPaidAmount(byUserPayment.get().getTotalPaidAmount());
+		}
 		UserPayment userPayment = repository.save(user);
 		return userPayment;
 	}
 
-	public UserPayment getPaymentDetails(int userId, int BatchId) {
+	public UserPaymentDetailsDTO getPaymentDetails(int userId, int BatchId) {
 
 		UserPaymentID ID = new UserPaymentID(userId, BatchId);
 		Optional<UserPayment> byId = repository.findById(ID);
-		return byId.get();
+		UserPayment userPayment = byId.get();
+
+		
+		List<InstallmentStructure> byBatch = installmentRepo.findByBatch(BatchId);
+		
+		UserPaymentDetailsDTO dto = new UserPaymentDetailsDTO();
+
+		UserPaymentDetailsDTO detailsDTO = mapper.map(userPayment, UserPaymentDetailsDTO.class);
+
+		InstallmentDTO[] map = mapper.map(byBatch, InstallmentDTO[].class);
+		
+		detailsDTO.setDto(Arrays.asList(map));
+		
+		
+		return detailsDTO;
 	}
 
 	public List<UserPayment> getAllUserPayment() {

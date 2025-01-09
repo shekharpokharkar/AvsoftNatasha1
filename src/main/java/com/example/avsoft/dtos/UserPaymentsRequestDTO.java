@@ -1,7 +1,10 @@
 package com.example.avsoft.dtos;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public class UserPaymentsRequestDTO {
 
+	
 	private int batchId;
 	private int userId;
 	private int amount;

@@ -5,7 +5,10 @@ import java.time.LocalDate;
 import com.example.avsoft.enums.PaymentMode;
 import com.example.avsoft.enums.Status;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class InstallmentrRequestDto {
+	
 	private int batchId;
 	private int installmentNo;
 	private int payAmount;

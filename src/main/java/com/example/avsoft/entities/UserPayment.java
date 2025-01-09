@@ -2,9 +2,12 @@ package com.example.avsoft.entities;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,7 +24,9 @@ public class UserPayment {
 	private String status;
 	private int totalPaidAmount;
 	
+	
 
+	
 	public int getUserId() {
 		return userId;
 	}

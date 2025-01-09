@@ -11,6 +11,6 @@ public interface InstallmentStructureRepository extends JpaRepository<Installmen
 
 	
 	@Query(name = "select * from InstallmentStructure where batch :batchId")
-	public List<InstallmentStructure> findByBatch(Long batchId);
+	public List<InstallmentStructure> findByBatch(int batchId);
 
 }

@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.avsoft.dtos.ChangeStatusDto;
-import com.example.avsoft.dtos.EnrollmentStudent;
+import com.example.avsoft.dtos.EnrollmentResponseStudent;
 import com.example.avsoft.entities.Batch;
 import com.example.avsoft.entities.User;
 import com.example.avsoft.entities.UserBatchEnrollment;
@@ -18,6 +19,8 @@ import com.example.avsoft.repositories.UserRepository;
 
 @Service
 public class EnrollmentService {
+	
+
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -71,18 +74,24 @@ public class EnrollmentService {
 	
 	
 	
-	public List<EnrollmentStudent> getEnrollments(int batchId) {
+	public List<EnrollmentResponseStudent> getEnrollments(int batchId) 
+	{
+		
+		//get Details of UserBatchEnrollment
 	    List<UserBatchEnrollment> enrolledUsers = userbatchrepo.findByBatchId(batchId);
-	    List<EnrollmentStudent> students = new ArrayList<>();
+	    
+	    List<EnrollmentResponseStudent> students = new ArrayList<>();
 
 	    for (UserBatchEnrollment enrolledUser : enrolledUsers) {
-	        Optional<User> userOptional = userRepository.findById(enrolledUser.getUserId());
+	        
+	    	Optional<User> userOptional = userRepository.findById(enrolledUser.getUserId());
 
 	        if (userOptional.isPresent()) {
+	        	
 	            User user = userOptional.get();
 	            
-	            // Create a new EnrollmentStudent DTO
-	            EnrollmentStudent enrollmentStudent = new EnrollmentStudent();
+	            //Create a new EnrollmentResponseStudent DTO
+	            EnrollmentResponseStudent enrollmentStudent = new EnrollmentResponseStudent();
 	            
 	            // Set values from User and UserBatchEnrollment
 	            enrollmentStudent.setEnrollmentId(enrolledUser.getId());
@@ -93,10 +102,12 @@ public class EnrollmentService {
 	            enrollmentStudent.setStatus(enrolledUser.getStatus()); // From UserBatchEnrollment
 	            enrollmentStudent.setAmount(enrolledUser.getAmount()); // From UserBatchEnrollment
 	            enrollmentStudent.setStatusSpecial(enrolledUser.getStatusSpecial());
+	            enrollmentStudent.setUserId(user.getId());
 	            students.add(enrollmentStudent);
 	        }
 	    }
 
+	   
 	    return students;
 	}
 	

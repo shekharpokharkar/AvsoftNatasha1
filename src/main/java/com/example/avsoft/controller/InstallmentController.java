@@ -24,6 +24,8 @@ import com.example.avsoft.responses.InstallmentResponseDto;
 import com.example.avsoft.services.InstallmentService;
 import com.example.avsoft.services.InstallmentStructureService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class InstallmentController {
 
@@ -35,7 +37,7 @@ public class InstallmentController {
 
 	// Create a new installment
 	@PostMapping("/installmentDetails/create")
-	public ResponseEntity saveInstallmentDetails(@RequestBody InstallmentrRequestDto requestDto) {
+	public ResponseEntity saveInstallmentDetails(@Valid @RequestBody InstallmentrRequestDto requestDto) {
 		InstallmentService.saveInstallment(requestDto);
 		return new ResponseEntity("installment details created succesfully", HttpStatus.CREATED);
 	}
