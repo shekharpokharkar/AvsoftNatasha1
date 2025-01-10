@@ -9,6 +9,17 @@ public class InstallmentDTO {
 	private String date;
 	private BigDecimal amount;
 	private Long batch;
+	private int totalPaidAmount;
+	
+	
+	
+	public int getTotalPaidAmount() {
+		return totalPaidAmount;
+	}
+
+	public void setTotalPaidAmount(int totalPaidAmount) {
+		this.totalPaidAmount = totalPaidAmount;
+	}
 
 	public int getInsatllmentId() {
 		return insatllmentId;

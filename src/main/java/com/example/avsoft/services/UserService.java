@@ -336,7 +336,10 @@ public class UserService {
 				if("Approved".equalsIgnoreCase(dto.getStatus()))
 				{
 					userPayment.setStatus(dto.getStatus());
-					userPayment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
+					int total=totalPaidAmount+userPayment.getRequestedAmount().intValue();
+					int reqamount=userPayment.getRequestedAmount().intValue();
+					
+					userPayment.setTotalPaidAmount(total);
 					userPayment.setRequestedAmount(new BigDecimal(0));
 					//change status in db
 					UserPayment save = paymentRepository.save(userPayment);
@@ -345,7 +348,7 @@ public class UserService {
 					payment.setBatchTotalFees(byBatchId.get().getFee());
 					payment.setRequestedAmount(new BigDecimal(0));
 					payment.setStatus("Approved");
-					payment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
+					payment.setTotalPaidAmount(total);
 					payment.setUserId(userPayment.getUserId());
 				}else
 				{

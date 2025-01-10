@@ -56,26 +56,27 @@ public class BatchService {
 
 		BatchInstallmentDTO installmentDTO = input.getInstallmentDTO();
 		try {
-		
-		int totalInstallmentFee=0;
-		List<BatchInstallmentDetailsDTO> batchInstallmentdto=input.getInstallmentDTO().getBatchInstallmentdto();
-				
-				for(BatchInstallmentDetailsDTO dto:batchInstallmentdto)
-				{
-				
-					totalInstallmentFee=totalInstallmentFee+Integer.parseInt(dto.getInstallmentFee());
+
+			int totalInstallmentFee = 0;
+			if (input.getInstallmentDTO().getBatchInstallmentdto() != null) {
+				List<BatchInstallmentDetailsDTO> batchInstallmentdto = input.getInstallmentDTO()
+						.getBatchInstallmentdto();
+
+				for (BatchInstallmentDetailsDTO dto : batchInstallmentdto) {
+
+					totalInstallmentFee = totalInstallmentFee + Integer.parseInt(dto.getInstallmentFee());
 				}
-			
-			if(input.getFee() != totalInstallmentFee)
-			{
-				throw new RuntimeException("Batch Fee and Total Sum of Installment Fees didn,t Match");
+
+				if (input.getFee() != totalInstallmentFee) {
+					throw new RuntimeException("Batch Fee and Total Sum of Installment Fees didn't Match");
+				}
+
 			}
-			
-			if(installmentDTO.getBatchInstallmentdto() == null )
-			{
-				createInstallmentStructureByDefault(input.getInstallmentDTO().getInsatllmentNo(),input.getInstallmentDTO().getNoOfDaysInbetweenInstallment(), newBatch.getId(), input.getFee());
-			}else
-			{
+
+			if (installmentDTO.getBatchInstallmentdto() == null) {
+				createInstallmentStructureByDefault(input.getInstallmentDTO().getInsatllmentNo(),
+						input.getInstallmentDTO().getNoOfDaysInbetweenInstallment(), newBatch.getId(), input.getFee());
+			} else {
 				createInstallmentStructure(installmentDTO, newBatch.getId(), input.getFee());
 			}
 
@@ -98,17 +99,16 @@ public class BatchService {
 		List<BatchInstallmentDetailsDTO> batchInstallmentdto = installmentDTO.getBatchInstallmentdto();
 
 		batchInstallmentdto.get(installment).getInstallmentDate();
-		
 
 		while (installment <= insatllmentNo) {
 			InstallmentStructure structure = new InstallmentStructure();
 
-			structure.setDate(LocalDate.parse(batchInstallmentdto.get(installment-1).getInstallmentDate()));
+			structure.setDate(LocalDate.parse(batchInstallmentdto.get(installment - 1).getInstallmentDate()));
 
 			if (installment == 1) {
-				structure.setAmount(new BigDecimal(batchInstallmentdto.get(installment-1).getInstallmentFee()));
+				structure.setAmount(new BigDecimal(batchInstallmentdto.get(installment - 1).getInstallmentFee()));
 			} else {
-				structure.setAmount(new BigDecimal(batchInstallmentdto.get(installment-1).getInstallmentFee()));
+				structure.setAmount(new BigDecimal(batchInstallmentdto.get(installment - 1).getInstallmentFee()));
 			}
 
 			structure.setBatch(batch);
@@ -121,9 +121,9 @@ public class BatchService {
 		installmentRepository.saveAll(strlist);
 	}
 
-	private void createInstallmentStructureByDefault(int insatllmentNo,String noOfDaysInbetweenInstallment, Long batch, int fees) {
+	private void createInstallmentStructureByDefault(int insatllmentNo, String noOfDaysInbetweenInstallment, Long batch,
+			int fees) {
 
-		
 		int eachInstallment = 0;
 		int lastInstallmet = fees % 5000;
 

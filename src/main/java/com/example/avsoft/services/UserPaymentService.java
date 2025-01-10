@@ -48,7 +48,7 @@ public class UserPaymentService {
 		Long batchId = payment.getBatchId();
 		int userId = payment.getUserId();
 
-	 Optional<UserBatchEnrollment> byBatchIdAndUserId = userRepo.findByBatchIdAndUserId(batchId, userId);
+		Optional<UserBatchEnrollment> byBatchIdAndUserId = userRepo.findByBatchIdAndUserId(batchId, userId);
 
 		if (byBatchIdAndUserId.isEmpty()) {
 			throw new UserPaymentException("Student:" + userId + " is not enrolled in in the batch:" + batchId
@@ -97,35 +97,45 @@ public class UserPaymentService {
 
 	public UserPaymentDetailsDTO getPaymentDetails(int userId, Long BatchId) {
 
+		// Finding the userId+BatchId userPament
 		UserPaymentID ID = new UserPaymentID(userId, BatchId);
-		Optional<UserPayment> byId = repository.findById(ID);
-		Optional<Batch> byId2 = batchRepo.findById(BatchId);
 		
+		//find UserPayment Details b using Id
+		Optional<UserPayment> byId = repository.findById(ID);
 
+		//find Batch Details by Batch Id
+		Optional<Batch> byId2 = batchRepo.findById(BatchId);
+
+		
+		//chekck Batch is created and userIs Enroll in batch
 		if (byId.isEmpty() && byId2.isEmpty()) {
 			throw new RuntimeException("Sorry Your Record Not found plz check once OR contact to admin");
 		}
+		
+		
+		
 		UserPayment userPayment = byId.get();
 
+		//find All Installment deatils of given batch
 		List<InstallmentStructure> byBatch = installmentRepo.findByBatch(BatchId);
 
-		
-
+		//UserPayment Details
 		UserPaymentDetailsDTO detailsDTO = mapper.map(userPayment, UserPaymentDetailsDTO.class);
 
 		InstallmentDTO[] map = mapper.map(byBatch, InstallmentDTO[].class);
 
-		detailsDTO.setDto(Arrays.asList(map));
-		
-		int fee = byId2.get().getFee();
-		detailsDTO.setBatchTotalFees(fee );
-		
+		List<InstallmentDTO> asList = Arrays.asList(map);
+
+		detailsDTO.setDto(asList);
+
+		detailsDTO.setBatchTotalFees(byId2.get().getFee());
+
 		return detailsDTO;
 	}
 
 	public List<UserPayment> getAllUserPayment() {
-		List<UserPayment> all = repository.findAll();
-		return all;
+		
+		return null;
 	}
 
 }
