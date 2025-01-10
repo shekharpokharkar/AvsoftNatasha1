@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class UserPaymentResponseDTO {
 	private int userId;
-	private int batchId;
+	private Long batchId;
 	private BigDecimal requestedAmount;
 	private String status;
 	private int totalPaidAmount;
@@ -18,11 +18,11 @@ public class UserPaymentResponseDTO {
 		this.userId = userId;
 	}
 
-	public int getBatchId() {
+	public Long getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(int batchId) {
+	public void setBatchId(Long batchId) {
 		this.batchId = batchId;
 	}
 
@@ -65,7 +65,7 @@ public class UserPaymentResponseDTO {
 				+ batchTotalFees + "]";
 	}
 
-	public UserPaymentResponseDTO(int userId, int batchId, BigDecimal requestedAmount, String status,
+	public UserPaymentResponseDTO(int userId, Long batchId, BigDecimal requestedAmount, String status,
 			int totalPaidAmount, int batchTotalFees) {
 
 		this.userId = userId;

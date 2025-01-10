@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @GetMapping("/enroll/{id}")
-    public ResponseEntity<String> enroll(@PathVariable Integer id) {
+    public ResponseEntity<String> enroll(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         boolean alreadyEnrolled = userbatchrepo.existsByUserIdAndBatchId(currentUser.getId(), id);
@@ -129,7 +129,7 @@ public class UserController {
     
     
     @GetMapping("/apply-special/{batchId}")
-    public ResponseEntity<String> applySpecial(@PathVariable int batchId) {
+    public ResponseEntity<String> applySpecial(@PathVariable Long batchId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
 

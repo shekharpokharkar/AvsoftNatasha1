@@ -29,7 +29,7 @@ public class InstallmentStructure {
 	private BigDecimal amount;
 
 	@Column(name = "Batch_Id")
-	private int batch;
+	private Long batch;
 	
 	
 
@@ -69,11 +69,11 @@ public class InstallmentStructure {
 		this.amount = amount;
 	}
 
-	public int getBatch() {
+	public Long getBatch() {
 		return batch;
 	}
 
-	public void setBatch(int batch) {
+	public void setBatch(Long batch) {
 		this.batch = batch;
 	}
 

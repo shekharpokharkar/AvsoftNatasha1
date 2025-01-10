@@ -6,7 +6,7 @@ import java.util.List;
 public class UserPaymentDetailsDTO {
 
 	private int userId;
-	private int batchId;
+	private Long batchId;
 	private BigDecimal requestedAmount;
 	private String status;
 	private int totalPaidAmount;
@@ -22,11 +22,11 @@ public class UserPaymentDetailsDTO {
 		this.userId = userId;
 	}
 
-	public int getBatchId() {
+	public Long getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(int batchId) {
+	public void setBatchId(Long batchId) {
 		this.batchId = batchId;
 	}
 

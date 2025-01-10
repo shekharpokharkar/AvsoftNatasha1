@@ -9,9 +9,9 @@ public class UserPaymentID implements Serializable {
 
 	private int userId;
 
-	private int batchId;
+	private Long batchId;
 
-	public UserPaymentID(int userId, int batchId) {
+	public UserPaymentID(int userId, Long batchId) {
 
 		this.userId = userId;
 		this.batchId = batchId;
@@ -25,11 +25,11 @@ public class UserPaymentID implements Serializable {
 		this.userId = userId;
 	}
 
-	public int getBatchId() {
+	public Long getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(int batchId) {
+	public void setBatchId(Long batchId) {
 		this.batchId = batchId;
 	}
 

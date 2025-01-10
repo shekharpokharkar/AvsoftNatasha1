@@ -9,12 +9,12 @@ import com.example.avsoft.entities.UserBatchEnrollment;
 
 public interface UserBatchEnrollmentRepo  extends JpaRepository<UserBatchEnrollment, Integer>{
 
-	boolean existsByUserIdAndBatchId(Integer userId, Integer batchId);
+	boolean existsByUserIdAndBatchId(Integer userId, Long batchId);
 	
 	List<UserBatchEnrollment> findByUserId(int userId);
-	List<UserBatchEnrollment> findByBatchId(int batchId);
+	List<UserBatchEnrollment> findByBatchId(Long batchId);
 
-    Optional<UserBatchEnrollment> findByBatchIdAndUserId(int batchId, int userId);
+    Optional<UserBatchEnrollment> findByBatchIdAndUserId(Long batchId, int userId);
     
     
 }

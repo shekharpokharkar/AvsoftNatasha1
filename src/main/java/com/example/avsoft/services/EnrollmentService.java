@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.avsoft.dtos.ChangeStatusDto;
-import com.example.avsoft.dtos.EnrollmentResponseStudent;
+import com.example.avsoft.dtos.EnrollmentStudent;
 import com.example.avsoft.entities.Batch;
 import com.example.avsoft.entities.User;
 import com.example.avsoft.entities.UserBatchEnrollment;
@@ -19,8 +18,6 @@ import com.example.avsoft.repositories.UserRepository;
 
 @Service
 public class EnrollmentService {
-	
-
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -46,13 +43,13 @@ public class EnrollmentService {
 //	   
 //	 }
 	
-	public void enrollUserInBatch(Integer userId, Integer batchId) {
+	public void enrollUserInBatch(Integer userId, Long id) {
 	    // Fetch the batch entity from the database
-	    Optional<Batch> batchOptional = batchRepository.findById(batchId);
+	    Optional<Batch> batchOptional = batchRepository.findById(id);
 
 	    // Check if batch exists, throw an exception if not
 	    if (!batchOptional.isPresent()) {
-	        throw new IllegalArgumentException("Batch with ID " + batchId + " does not exist.");
+	        throw new IllegalArgumentException("Batch with ID " + id + " does not exist.");
 	    }
 
 	    // Create a new enrollment
@@ -74,24 +71,18 @@ public class EnrollmentService {
 	
 	
 	
-	public List<EnrollmentResponseStudent> getEnrollments(int batchId) 
-	{
-		
-		//get Details of UserBatchEnrollment
+	public List<EnrollmentStudent> getEnrollments(Long batchId) {
 	    List<UserBatchEnrollment> enrolledUsers = userbatchrepo.findByBatchId(batchId);
-	    
-	    List<EnrollmentResponseStudent> students = new ArrayList<>();
+	    List<EnrollmentStudent> students = new ArrayList<>();
 
 	    for (UserBatchEnrollment enrolledUser : enrolledUsers) {
-	        
-	    	Optional<User> userOptional = userRepository.findById(enrolledUser.getUserId());
+	        Optional<User> userOptional = userRepository.findById(enrolledUser.getUserId());
 
 	        if (userOptional.isPresent()) {
-	        	
 	            User user = userOptional.get();
 	            
-	            //Create a new EnrollmentResponseStudent DTO
-	            EnrollmentResponseStudent enrollmentStudent = new EnrollmentResponseStudent();
+	            // Create a new EnrollmentStudent DTO
+	            EnrollmentStudent enrollmentStudent = new EnrollmentStudent();
 	            
 	            // Set values from User and UserBatchEnrollment
 	            enrollmentStudent.setEnrollmentId(enrolledUser.getId());
@@ -102,12 +93,10 @@ public class EnrollmentService {
 	            enrollmentStudent.setStatus(enrolledUser.getStatus()); // From UserBatchEnrollment
 	            enrollmentStudent.setAmount(enrolledUser.getAmount()); // From UserBatchEnrollment
 	            enrollmentStudent.setStatusSpecial(enrolledUser.getStatusSpecial());
-	            enrollmentStudent.setUserId(user.getId());
 	            students.add(enrollmentStudent);
 	        }
 	    }
 
-	   
 	    return students;
 	}
 	

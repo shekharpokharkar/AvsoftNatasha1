@@ -3,11 +3,15 @@ package com.example.avsoft.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.example.avsoft.entities.Video;
 
+import jakarta.transaction.Transactional;
+
 public interface VideoRepository extends JpaRepository<Video, Integer> {
+
 
 	@Query("SELECT v FROM Video v WHERE v.batch = :field ORDER BY v.createdAt ASC")
 	public List<Video> findAll(String field);

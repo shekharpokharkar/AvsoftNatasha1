@@ -12,13 +12,13 @@ public interface UserPaymentRepository extends JpaRepository<UserPayment, UserPa
 
 	
 	@Query(name = "SELECT U FROM UserPayment U WHERE U.batchId = :BatchID AND U.status = :paymentStatus")
-	public List<UserPayment> findAllUserPaymentByBatchIdAndStatus(int BatchID,String paymentStatus);
+	public List<UserPayment> findAllUserPaymentByBatchIdAndStatus(Long BatchID,String paymentStatus);
 
 	@Query(name = "SELECT U FROM UserPayment U WHERE U.status = :paymentStatus")
 	public List<UserPayment> findAllUserPaymentByStatus(String paymentStatus);
 
 	@Query("SELECT U FROM UserPayment U WHERE U.batchId = :batchId")
-	public List<UserPayment> findAllByBatchId(int batchId);
+	public List<UserPayment> findAllByBatchId(Long batchId);
 
 	@Query("SELECT U FROM UserPayment U WHERE U.userId = :userId")
 	public UserPayment findByUserId(int userId);

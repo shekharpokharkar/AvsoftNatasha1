@@ -41,18 +41,18 @@ public class UserPaymentService {
 
 		UserPayment user = new UserPayment();
 
-		int batch = payment.getBatchId();
+		Long batchId = payment.getBatchId();
 		int userId = payment.getUserId();
 
-		Optional<UserBatchEnrollment> byBatchIdAndUserId = userRepo.findByBatchIdAndUserId(batch, userId);
+	 Optional<UserBatchEnrollment> byBatchIdAndUserId = userRepo.findByBatchIdAndUserId(batchId, userId);
 
 		if (byBatchIdAndUserId.isEmpty()) {
-			throw new UserPaymentException("Student:" + userId + " is not enrolled in in the batch:" + batch
+			throw new UserPaymentException("Student:" + userId + " is not enrolled in in the batch:" + batchId
 					+ " first enroll and the do payment");
 		}
 		int batchfee = byBatchIdAndUserId.get().getBatch().getFee();
 
-		Optional<UserPayment> byUserPayment = repository.findById(new UserPaymentID(userId, batch));
+		Optional<UserPayment> byUserPayment = repository.findById(new UserPaymentID(userId, batchId));
 
 		if (byUserPayment.isPresent()) {
 			if (byUserPayment.get().getTotalPaidAmount() == batchfee) {
@@ -78,7 +78,7 @@ public class UserPaymentService {
 		}
 
 		user.setRequestedAmount(new BigDecimal(payment.getAmount()));
-		user.setBatchId(batch);
+		user.setBatchId(batchId);
 		user.setStatus("Pending");
 		user.setUserId(userId);
 		if (byUserPayment.isEmpty()) {
@@ -91,7 +91,7 @@ public class UserPaymentService {
 		return userPayment;
 	}
 
-	public UserPaymentDetailsDTO getPaymentDetails(int userId, int BatchId) {
+	public UserPaymentDetailsDTO getPaymentDetails(int userId, Long BatchId) {
 
 		UserPaymentID ID = new UserPaymentID(userId, BatchId);
 		Optional<UserPayment> byId = repository.findById(ID);

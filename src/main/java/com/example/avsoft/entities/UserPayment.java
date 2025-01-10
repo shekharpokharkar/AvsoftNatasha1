@@ -18,7 +18,7 @@ public class UserPayment {
 	@Id
 	private int userId;
 	@Id
-	private int batchId;
+	private Long batchId;
 
 	private BigDecimal requestedAmount;
 	private String status;
@@ -35,11 +35,11 @@ public class UserPayment {
 		this.userId = userId;
 	}
 
-	public int getBatchId() {
+	public Long getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(int batchId) {
+	public void setBatchId(Long batchId) {
 		this.batchId = batchId;
 	}
 
@@ -73,7 +73,7 @@ public class UserPayment {
 				+ ", status=" + status + ", totalPaidAmount=" + totalPaidAmount + "]";
 	}
 
-	public UserPayment(int userId, int batchId) {
+	public UserPayment(int userId, Long batchId) {
 
 		this.userId = userId;
 		this.batchId = batchId;

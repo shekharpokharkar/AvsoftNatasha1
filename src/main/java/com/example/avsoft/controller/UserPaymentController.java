@@ -17,6 +17,8 @@ import com.example.avsoft.entities.UserPayment;
 import com.example.avsoft.exceptions.UserEnrollmentException;
 import com.example.avsoft.services.UserPaymentService;
 
+
+
 @RestController
 public class UserPaymentController {
 
@@ -37,7 +39,7 @@ public class UserPaymentController {
 	}
 
 	@GetMapping("/userPaymentByID")
-	public ResponseEntity<UserPaymentDetailsDTO> getFeeDetails(@RequestParam int batchId, @RequestParam int userId) {
+	public ResponseEntity<UserPaymentDetailsDTO> getFeeDetails(@RequestParam Long batchId, @RequestParam int userId) {
 
 		UserPaymentDetailsDTO userPayment = service.getPaymentDetails(userId,batchId);
 		return new ResponseEntity<UserPaymentDetailsDTO>(userPayment, HttpStatus.OK);

@@ -8,7 +8,7 @@ public class InstallmentDTO {
 	private int installmentNo;
 	private String date;
 	private BigDecimal amount;
-	private int batch;
+	private Long batch;
 
 	public int getInsatllmentId() {
 		return insatllmentId;
@@ -42,15 +42,15 @@ public class InstallmentDTO {
 		this.amount = amount;
 	}
 
-	public int getBatch() {
+	public Long getBatch() {
 		return batch;
 	}
 
-	public void setBatch(int batch) {
+	public void setBatch(Long batch) {
 		this.batch = batch;
 	}
 
-	public InstallmentDTO(int insatllmentId, int installmentNo, String date, BigDecimal amount, int batch) {
+	public InstallmentDTO(int insatllmentId, int installmentNo, String date, BigDecimal amount, Long batch) {
 
 		this.insatllmentId = insatllmentId;
 		this.installmentNo = installmentNo;

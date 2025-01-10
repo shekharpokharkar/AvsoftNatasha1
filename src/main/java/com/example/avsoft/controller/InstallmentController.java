@@ -17,14 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.avsoft.dtos.InstallmentrRequestDto;
-import com.example.avsoft.entities.InstallmentStructure;
 import com.example.avsoft.enums.Status;
-import com.example.avsoft.repositories.InstallmentStructureRepository;
 import com.example.avsoft.responses.InstallmentResponseDto;
 import com.example.avsoft.services.InstallmentService;
-import com.example.avsoft.services.InstallmentStructureService;
-
-import jakarta.validation.Valid;
 
 @RestController
 public class InstallmentController {
@@ -32,12 +27,9 @@ public class InstallmentController {
 	@Autowired
 	private InstallmentService InstallmentService;
 
-	@Autowired
-	private InstallmentStructureService installmentStructureservice;
-
 	// Create a new installment
 	@PostMapping("/installmentDetails/create")
-	public ResponseEntity saveInstallmentDetails(@Valid @RequestBody InstallmentrRequestDto requestDto) {
+	public ResponseEntity saveInstallmentDetails(@RequestBody InstallmentrRequestDto requestDto) {
 		InstallmentService.saveInstallment(requestDto);
 		return new ResponseEntity("installment details created succesfully", HttpStatus.CREATED);
 	}
@@ -67,15 +59,6 @@ public class InstallmentController {
 		} else {
 			return new ResponseEntity<>("Installment not found", HttpStatus.NOT_FOUND);
 		}
-	}
-
-	@GetMapping("/getInstallmentDetails/{batchId}")
-	//@PreAuthorize("hasAuthority('ROLE_ADMIN','ROLE_USER')")
-	public ResponseEntity<List<InstallmentStructure>> getAllInstallments(@PathVariable String batchId) {
-
-		List<InstallmentStructure> allInstruction = installmentStructureservice.getAllInstruction(batchId);
-		return new ResponseEntity<List<InstallmentStructure>>(allInstruction, HttpStatus.OK);
-
 	}
 
 }

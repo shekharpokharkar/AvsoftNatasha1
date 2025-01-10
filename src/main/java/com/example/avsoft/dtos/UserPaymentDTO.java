@@ -1,7 +1,5 @@
 package com.example.avsoft.dtos;
 
-import java.math.BigDecimal;
-
 public class UserPaymentDTO {
 
 	private int userId;

@@ -58,9 +58,7 @@ public class UserService {
 
 	@Autowired
 	private UserBatchEnrollmentRepo userBatchrepo;
-	
-	
-	
+
 	public List<UserDto> allUsers() {
 		List<User> users = (List<User>) userRepository.findAll();
 		return users.stream().map((user -> {
@@ -171,98 +169,7 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	//Admin give you userId and Batch Id
-	public UserPaymentResponseDTO processFee(UserPaymentsRequestDTO dto) {
-		int batchId = dto.getBatchId();
-
-		//Find Corresponding Batch by using batch Id   
-		Optional<Batch> byBatchId = batchRepository.findById(batchId);
-		
-		//Find UserBatch Enrollment  by using batch Id   and userId
-		Optional<UserBatchEnrollment> byBatchIdAndUserId = userBatchrepo.findByBatchIdAndUserId(batchId,
-				dto.getUserId());
-
-		//If corresponding user or batch didnt exist then throw error
-		if (byBatchId.isEmpty() || byBatchIdAndUserId.isEmpty()) {
-			throw new RuntimeException("Given " + batchId
-					+ " id is Incorrect OR please enter correct Batch Id OR Enroll In Batch:" + batchId);
-		}
-		
-		
-		UserPaymentID id = new UserPaymentID(dto.getUserId(), batchId);
-
-		//Find User payment Details
-		Optional<UserPayment> byId = paymentRepository.findById(id);
-
-		if(byId.isPresent()&& byId.get().getRequestedAmount() != null )
-		{
-			
-			dto.setAmount(byId.get().getRequestedAmount().intValue());
-			
-		}
-		else
-		{
-			throw new RuntimeException("Exception Occurs");
-		}
-		
-		//Create ResponseDTO
-		UserPaymentResponseDTO payment = new UserPaymentResponseDTO();
-
-		
-		// if corresponding user and batch id exist then process
-		if (byId.isPresent()) {
-
-			UserPayment userPayment = byId.get();
-			
-		
-			//find previous paid amount
-			int totalPaidAmount = byId.get().getTotalPaidAmount();
-			
-			//get requested paid Amount
-			BigDecimal requestedAmount2 = byId.get().getRequestedAmount();
-		
-			//get 
-		
-			
-			if("Approved".equalsIgnoreCase(dto.getStatus()))
-			{
-				userPayment.setStatus(dto.getStatus());
-				userPayment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
-				userPayment.setRequestedAmount(new BigDecimal(0));
-				//change status in db
-				UserPayment save = paymentRepository.save(userPayment);
-				
-				payment.setBatchId(userPayment.getBatchId());
-				payment.setBatchTotalFees(byBatchId.get().getFee());
-				payment.setRequestedAmount(userPayment.getRequestedAmount());
-				payment.setStatus("Approved");
-				payment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
-				payment.setUserId(userPayment.getUserId());
-			}else
-			{
-				
-				userPayment.setStatus(dto.getStatus());
-				userPayment.setTotalPaidAmount(totalPaidAmount);
-				userPayment.setRequestedAmount(userPayment.getRequestedAmount());
-				//change status in db
-				UserPayment save = paymentRepository.save(userPayment);
-				payment.setBatchId(userPayment.getBatchId());
-				payment.setBatchTotalFees(byBatchId.get().getFee());
-				payment.setRequestedAmount(userPayment.getRequestedAmount());
-				payment.setStatus(dto.getStatus());
-				payment.setTotalPaidAmount(totalPaidAmount);
-				payment.setUserId(userPayment.getUserId());
-			}
-			
-		}
-		return payment;
-	}
-
-	
-	
-	
 	public List<UserPaymentResponseDTO> getAllprocessFee() {
-
 		List<UserPayment> allPayment = paymentRepository.findAll();
 
 		List<UserPaymentResponseDTO> pmt = new ArrayList<UserPaymentResponseDTO>();
@@ -270,7 +177,8 @@ public class UserService {
 		for (UserPayment dto : allPayment) {
 			UserPaymentResponseDTO payment = new UserPaymentResponseDTO();
 
-			Optional<Batch> byId = batchRepository.findById(dto.getBatchId());
+			Long batchId = dto.getBatchId();
+			Optional<Batch> byId = batchRepository.findById(batchId);
 			payment.setBatchTotalFees(byId.get().getFee());
 			payment.setRequestedAmount(dto.getRequestedAmount());
 			payment.setStatus("Approved");
@@ -282,8 +190,7 @@ public class UserService {
 		return pmt;
 	}
 
-	public List<UserPaymentResponseDTO> getAllprocessFeeByBatchID(int batchId, String status) {
-
+	public List<UserPaymentResponseDTO> getAllprocessFeeByBatchID(Long batchId, String status) {
 		List<UserPayment> allPayment = paymentRepository.findAllUserPaymentByBatchIdAndStatus(batchId, status);
 		allPayment.forEach(s -> System.out.println(s));
 		List<UserPaymentResponseDTO> pmt = new ArrayList<UserPaymentResponseDTO>();
@@ -305,13 +212,11 @@ public class UserService {
 		}
 
 		return pmt;
-
 	}
 
 	public List<UserPaymentResponseDTO> getAllprocessFeeRequestBasedOnPaymentStatus(String paymentStatus) {
-
 		List<UserPayment> allPayment = paymentRepository.findAllUserPaymentByStatus(paymentStatus);
-		
+
 		List<UserPaymentResponseDTO> pmt = new ArrayList<UserPaymentResponseDTO>();
 
 		for (UserPayment dto : allPayment) {
@@ -332,10 +237,9 @@ public class UserService {
 		return pmt;
 	}
 
-	public List<UserPaymentResponseDTO> getAllprocessFeeRequestBasedOnBatchId(int batchId) {
-		
+	public List<UserPaymentResponseDTO> getAllprocessFeeRequestBasedOnBatchId(Long batchId) {
 		List<UserPayment> allPayment = paymentRepository.findAllByBatchId(batchId);
-		
+
 		List<UserPaymentResponseDTO> pmt = new ArrayList<UserPaymentResponseDTO>();
 
 		for (UserPayment dto : allPayment) {
@@ -357,14 +261,12 @@ public class UserService {
 	}
 
 	public UserPaymentResponseDTO getAllprocessFeeRequestBasedOnUserId(int userId) {
-	
 		UserPayment dto = paymentRepository.findByUserId(userId);
-		
+
 		UserPaymentResponseDTO payment = new UserPaymentResponseDTO();
-		
+
 		Optional<Batch> byId = batchRepository.findById(dto.getBatchId());
-		if(dto != null)
-		{
+		if (dto != null) {
 			payment.setBatchTotalFees(byId.get().getFee());
 			payment.setRequestedAmount(dto.getRequestedAmount());
 			payment.setStatus(dto.getStatus());
@@ -372,8 +274,95 @@ public class UserService {
 			payment.setUserId(dto.getUserId());
 			payment.setBatchTotalFees(byId.get().getFee());
 		}
-			
+
 		return payment;
 	}
+
+	// Admin give you userId and Batch Id
+	public UserPaymentResponseDTO processFee(UserPaymentsRequestDTO dto) {
+			 Long batchId = dto.getBatchId();
+
+			//Find Corresponding Batch by using batch Id   
+			Optional<Batch> byBatchId = batchRepository.findById(batchId);
+			
+			//Find UserBatch Enrollment  by using batch Id   and userId
+			Optional<UserBatchEnrollment> byBatchIdAndUserId = userBatchrepo.findByBatchIdAndUserId(batchId,
+					dto.getUserId());
+
+			//If corresponding user or batch didnt exist then throw error
+			if (byBatchId.isEmpty() || byBatchIdAndUserId.isEmpty()) {
+				throw new RuntimeException("Given " + batchId
+						+ " id is Incorrect OR please enter correct Batch Id OR Enroll In Batch:" + batchId);
+			}
+			
+			
+			UserPaymentID id = new UserPaymentID(dto.getUserId(),dto.getBatchId() );
+
+			//Find User payment Details
+			Optional<UserPayment> byId = paymentRepository.findById(id);
+
+			if(byId.isPresent()&& byId.get().getRequestedAmount() != null )
+			{
+				
+				dto.setAmount(byId.get().getRequestedAmount().intValue());
+				
+			}
+			else
+			{
+				throw new RuntimeException("Exception Occurs");
+			}
+			
+			//Create ResponseDTO
+			UserPaymentResponseDTO payment = new UserPaymentResponseDTO();
+
+			
+			// if corresponding user and batch id exist then process
+			if (byId.isPresent()) {
+
+				UserPayment userPayment = byId.get();
+				
+			
+				//find previous paid amount
+				int totalPaidAmount = byId.get().getTotalPaidAmount();
+				
+				//get requested paid Amount
+				BigDecimal requestedAmount2 = byId.get().getRequestedAmount();
+			
+				//get 
+			
+				
+				if("Approved".equalsIgnoreCase(dto.getStatus()))
+				{
+					userPayment.setStatus(dto.getStatus());
+					userPayment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
+					userPayment.setRequestedAmount(new BigDecimal(0));
+					//change status in db
+					UserPayment save = paymentRepository.save(userPayment);
+					
+					payment.setBatchId(userPayment.getBatchId());
+					payment.setBatchTotalFees(byBatchId.get().getFee());
+					payment.setRequestedAmount(new BigDecimal(0));
+					payment.setStatus("Approved");
+					payment.setTotalPaidAmount(totalPaidAmount+userPayment.getRequestedAmount().intValue());
+					payment.setUserId(userPayment.getUserId());
+				}else
+				{
+					
+					userPayment.setStatus(dto.getStatus());
+					userPayment.setTotalPaidAmount(totalPaidAmount);
+					userPayment.setRequestedAmount(userPayment.getRequestedAmount());
+					//change status in db
+					UserPayment save = paymentRepository.save(userPayment);
+					payment.setBatchId(userPayment.getBatchId());
+					payment.setBatchTotalFees(byBatchId.get().getFee());
+					payment.setRequestedAmount(userPayment.getRequestedAmount());
+					payment.setStatus(dto.getStatus());
+					payment.setTotalPaidAmount(totalPaidAmount);
+					payment.setUserId(userPayment.getUserId());
+				}
+				
+			}
+			return payment;
+		}
 
 }

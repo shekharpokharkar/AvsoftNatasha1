@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.avsoft.dtos.BatchInstallmentRequestDTO;
 import com.example.avsoft.dtos.ChangeStatusDto;
-import com.example.avsoft.dtos.EnrollmentResponseStudent;
+import com.example.avsoft.dtos.EnrollmentStudent;
 import com.example.avsoft.dtos.UserPaymentResponseDTO;
 import com.example.avsoft.dtos.UserPaymentsRequestDTO;
 import com.example.avsoft.entities.Batch;
@@ -67,6 +67,7 @@ public class AdminController {
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/user-blogs")
 	public ResponseEntity<List<Blog>> getBlogs() {
+
 		List<Blog> blogs = BlogServices.getUsersBlogs();
 		return ResponseEntity.ok(blogs);
 
@@ -130,7 +131,7 @@ public class AdminController {
 			// Handle specific exception
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		} catch (Exception e) {
-
+			// Handle general exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
@@ -144,9 +145,9 @@ public class AdminController {
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/get-enrollments/{batchId}")
-	public ResponseEntity<List<EnrollmentResponseStudent>> getEnrollments(@PathVariable int batchId) {
+	public ResponseEntity<List<EnrollmentStudent>> getEnrollments(@PathVariable Long batchId) {
 		// Fetch the enrolled users for the batch
-		List<EnrollmentResponseStudent> users = enrollmentService.getEnrollments(batchId);
+		List<EnrollmentStudent> users = enrollmentService.getEnrollments(batchId);
 
 		// Return the list of users in the response
 		return ResponseEntity.ok(users);
@@ -199,7 +200,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/users/processFee/{batchId}/{paymentStatus}")
-	public ResponseEntity<List<UserPaymentResponseDTO>> getAllprocessFeeRequest(@PathVariable int batchId,
+	public ResponseEntity<List<UserPaymentResponseDTO>> getAllprocessFeeRequest(@PathVariable Long batchId,
 			@PathVariable String paymentStatus) {
 		List<UserPaymentResponseDTO> payment = userService.getAllprocessFeeByBatchID(batchId, paymentStatus);
 
@@ -216,16 +217,15 @@ public class AdminController {
 
 	@GetMapping("/users/processFeeByBatchId/{batchId}")
 	public ResponseEntity<List<UserPaymentResponseDTO>> getAllprocessFeeRequestBasedOnBatchId(
-			@PathVariable int batchId) {
+			@PathVariable Long batchId) {
 		List<UserPaymentResponseDTO> payment = userService.getAllprocessFeeRequestBasedOnBatchId(batchId);
 
 		return new ResponseEntity<List<UserPaymentResponseDTO>>(payment, HttpStatus.OK);
 	}
-	
-	@GetMapping("/users/processFeeByBatchId/{userId}")
-	public ResponseEntity<UserPaymentResponseDTO> getAllprocessFeeRequestBasedOnUserId(
-			@PathVariable int userId) {
-	UserPaymentResponseDTO payment = userService.getAllprocessFeeRequestBasedOnUserId(userId);
+
+	@GetMapping("/users/processFeeByUserId/{userId}")
+	public ResponseEntity<UserPaymentResponseDTO> getAllprocessFeeRequestBasedOnUserId(@PathVariable int userId) {
+		UserPaymentResponseDTO payment = userService.getAllprocessFeeRequestBasedOnUserId(userId);
 
 		return new ResponseEntity<UserPaymentResponseDTO>(payment, HttpStatus.OK);
 	}

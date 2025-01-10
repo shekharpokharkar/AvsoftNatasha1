@@ -12,7 +12,7 @@ public class InstallmentResponseDto {
 	private int installmentNo;
 	private long payAmount;
 	private LocalDateTime paymentDate;
-	private int batchId;
+	private Long batchId;
 	private int remainingAmount;
 	private LocalDate nextInstallmentDate;
 	private PaymentMode paymentMode;
@@ -82,12 +82,12 @@ public class InstallmentResponseDto {
 		this.userName = userName;
 	}
 
-	public int getBatchId() {
+	public Long getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(int i) {
-		this.batchId = i;
+	public void setBatchId(Long batchId) {
+		this.batchId = batchId;
 	}
 
 	public LocalDate getNextInstallmentDate() {

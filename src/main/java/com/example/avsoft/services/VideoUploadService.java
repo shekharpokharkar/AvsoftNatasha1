@@ -133,12 +133,14 @@ public class VideoUploadService {
 
 	}
 
+	//verify if file is uploaded or not
 	private boolean verifyFileUpload(Path path) {
 		// Check if file exists and is a valid file
 		File uploadedFile = path.toFile();
 		return uploadedFile.exists() && uploadedFile.isFile() && uploadedFile.length() > 0;
 	}
 
+	//find All Video by using field
 	public List<Video> findAllVideoSortingByField(String field) {
 
 		List<Video> videoList = videoRepo.findAll(field);

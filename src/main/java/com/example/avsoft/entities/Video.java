@@ -10,16 +10,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.TableGenerator;
 
-@Table(name = "video" )
+@Table(name = "video")
 @Entity
 public class Video {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "myEntityGen")
-	@TableGenerator(name = "myEntityGen", initialValue = 1050, allocationSize = 1)
+	@TableGenerator(name = "myEntityGen", initialValue = 1000, allocationSize = 1)
 	@Column(nullable = false)
 	private int id;
 
@@ -40,12 +41,11 @@ public class Video {
 	@Column(name = "Video_Status")
 	private boolean videostatus;
 
-	
-	public  boolean getVideostatus() {
+	public boolean isVideostatus() {
 		return videostatus;
 	}
 
-	public void setVideostatus( boolean videostatus) {
+	public void setVideostatus(boolean videostatus) {
 		this.videostatus = videostatus;
 	}
 

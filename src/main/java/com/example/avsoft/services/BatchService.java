@@ -75,7 +75,7 @@ public class BatchService {
 		return newBatch;
 	}
 
-	private void createInstallmentStructure(BatchInstallmentDTO installmentDTO, int batch, int fees) {
+	private void createInstallmentStructure(BatchInstallmentDTO installmentDTO, Long batch, int fees) {
 
 		int insatllmentNo = installmentDTO.getInsatllmentNo();
 		List<InstallmentStructure> strlist = new ArrayList<InstallmentStructure>();
@@ -107,7 +107,7 @@ public class BatchService {
 		installmentRepository.saveAll(strlist);
 	}
 
-	private void createInstallmentStructureByDefault(int insatllmentNo,String noOfDaysInbetweenInstallment, int batch, int fees) {
+	private void createInstallmentStructureByDefault(int insatllmentNo,String noOfDaysInbetweenInstallment, Long batch, int fees) {
 
 		
 		int eachInstallment = 0;
@@ -165,7 +165,8 @@ public class BatchService {
 		List<Batch> userBatches = new ArrayList<>();
 
 		for (UserBatchEnrollment enrollment : enrollments) {
-			Optional<Batch> batch = batchRepository.findById(enrollment.getId());
+
+			Optional<Batch> batch = batchRepository.findById(enrollment.getBatch().getId());
 
 			if (batch.isPresent()) {
 				userBatches.add(batch.get());
@@ -177,7 +178,7 @@ public class BatchService {
 		return userBatches;
 	}
 
-	public String applySpecial(int batchId, int userId) {
+	public String applySpecial(Long batchId, int userId) {
 		Optional<UserBatchEnrollment> enrollmentOpt = userBatchEnrollmentRepo.findByBatchIdAndUserId(batchId, userId);
 
 		if (enrollmentOpt.isPresent()) {

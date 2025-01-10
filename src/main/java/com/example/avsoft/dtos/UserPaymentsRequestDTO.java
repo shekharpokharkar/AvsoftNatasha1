@@ -1,20 +1,18 @@
 package com.example.avsoft.dtos;
 
-import jakarta.validation.constraints.NotEmpty;
-
 public class UserPaymentsRequestDTO {
 
 	
-	private int batchId;
+	private Long batchId;
 	private int userId;
 	private int amount;
 	private String status;
 
-	public int getBatchId() {
+	public  Long getBatchId() {
 		return batchId;
 	}
 
-	public void setBatchId(int batchId) {
+	public void setBatchId( Long batchId) {
 		this.batchId = batchId;
 	}
 
