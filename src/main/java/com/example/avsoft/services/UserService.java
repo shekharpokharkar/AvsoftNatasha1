@@ -273,6 +273,8 @@ public class UserService {
 			payment.setTotalPaidAmount(dto.getTotalPaidAmount());
 			payment.setUserId(dto.getUserId());
 			payment.setBatchTotalFees(byId.get().getFee());
+			payment.setBatchId(byId.get().getId());
+			
 		}
 
 		return payment;

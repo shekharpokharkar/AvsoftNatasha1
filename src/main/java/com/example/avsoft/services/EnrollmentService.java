@@ -93,6 +93,7 @@ public class EnrollmentService {
 	            enrollmentStudent.setStatus(enrolledUser.getStatus()); // From UserBatchEnrollment
 	            enrollmentStudent.setAmount(enrolledUser.getAmount()); // From UserBatchEnrollment
 	            enrollmentStudent.setStatusSpecial(enrolledUser.getStatusSpecial());
+	            enrollmentStudent.setUserId(user.getId());
 	            students.add(enrollmentStudent);
 	        }
 	    }

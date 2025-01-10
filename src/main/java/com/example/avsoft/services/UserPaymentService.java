@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 import com.example.avsoft.dtos.InstallmentDTO;
 import com.example.avsoft.dtos.UserPaymentDetailsDTO;
 import com.example.avsoft.dtos.UserPaymentsRequestDTO;
+import com.example.avsoft.entities.Batch;
 import com.example.avsoft.entities.InstallmentStructure;
 import com.example.avsoft.entities.UserBatchEnrollment;
 import com.example.avsoft.entities.UserPayment;
 import com.example.avsoft.entities.UserPaymentID;
 import com.example.avsoft.exceptions.UserEnrollmentException;
 import com.example.avsoft.exceptions.UserPaymentException;
+import com.example.avsoft.repositories.BatchRepository;
 import com.example.avsoft.repositories.InstallmentStructureRepository;
 import com.example.avsoft.repositories.UserBatchEnrollmentRepo;
 import com.example.avsoft.repositories.UserPaymentRepository;
@@ -36,6 +38,8 @@ public class UserPaymentService {
 
 	@Autowired
 	private InstallmentStructureRepository installmentRepo;
+	@Autowired
+	private BatchRepository batchRepo;
 
 	public UserPayment addUserPayment(UserPaymentsRequestDTO payment) throws UserEnrollmentException {
 
@@ -95,22 +99,27 @@ public class UserPaymentService {
 
 		UserPaymentID ID = new UserPaymentID(userId, BatchId);
 		Optional<UserPayment> byId = repository.findById(ID);
+		Optional<Batch> byId2 = batchRepo.findById(BatchId);
+		
 
-		if (byId.isEmpty()) {
+		if (byId.isEmpty() && byId2.isEmpty()) {
 			throw new RuntimeException("Sorry Your Record Not found plz check once OR contact to admin");
 		}
 		UserPayment userPayment = byId.get();
 
 		List<InstallmentStructure> byBatch = installmentRepo.findByBatch(BatchId);
 
-		UserPaymentDetailsDTO dto = new UserPaymentDetailsDTO();
+		
 
 		UserPaymentDetailsDTO detailsDTO = mapper.map(userPayment, UserPaymentDetailsDTO.class);
 
 		InstallmentDTO[] map = mapper.map(byBatch, InstallmentDTO[].class);
 
 		detailsDTO.setDto(Arrays.asList(map));
-
+		
+		int fee = byId2.get().getFee();
+		detailsDTO.setBatchTotalFees(fee );
+		
 		return detailsDTO;
 	}
 
