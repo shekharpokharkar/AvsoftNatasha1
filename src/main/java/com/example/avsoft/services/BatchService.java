@@ -56,7 +56,21 @@ public class BatchService {
 
 		BatchInstallmentDTO installmentDTO = input.getInstallmentDTO();
 		try {
-			newBatch = batchRepository.save(newBatch);
+		
+		int totalInstallmentFee=0;
+		List<BatchInstallmentDetailsDTO> batchInstallmentdto=input.getInstallmentDTO().getBatchInstallmentdto();
+				
+				for(BatchInstallmentDetailsDTO dto:batchInstallmentdto)
+				{
+				
+					totalInstallmentFee=totalInstallmentFee+Integer.parseInt(dto.getInstallmentFee());
+				}
+			
+			if(input.getFee() != totalInstallmentFee)
+			{
+				throw new RuntimeException("Batch Fee and Total Sum of Installment Fees didn,t Match");
+			}
+			
 			if(installmentDTO.getBatchInstallmentdto() == null )
 			{
 				createInstallmentStructureByDefault(input.getInstallmentDTO().getInsatllmentNo(),input.getInstallmentDTO().getNoOfDaysInbetweenInstallment(), newBatch.getId(), input.getFee());
@@ -65,7 +79,7 @@ public class BatchService {
 				createInstallmentStructure(installmentDTO, newBatch.getId(), input.getFee());
 			}
 
-			
+			newBatch = batchRepository.save(newBatch);
 
 			logger.info("Batch saved successfully with ID: {}", newBatch.getId());
 		} catch (Exception e) {
